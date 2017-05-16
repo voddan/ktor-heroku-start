@@ -23,6 +23,8 @@ else
 
 val html_utf8 = ContentType.Text.Html.withCharset(Charsets.UTF_8)
 
+var counter=0;
+
 fun Application.module() {
     install(DefaultHeaders)
     install(ConditionalHeaders)
@@ -42,7 +44,7 @@ fun Application.module() {
         serveClasspathResources("public")
 
         get("hello") {
-            call.respond("Hello World")
+            call.respond("Hello World " + counter++)
         }
 
         get("error") {
