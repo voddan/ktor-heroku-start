@@ -71,6 +71,9 @@ fun Application.module() {
                         +("remoteHost: " + call.request.local.remoteHost)
                     }
                     p {
+                        +("host: " + call.request.local.host)
+                    }
+                    p {
                         +("uri: " + call.request.local.uri)
                     }
                     p {
