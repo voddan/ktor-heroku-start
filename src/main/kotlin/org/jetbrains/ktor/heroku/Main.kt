@@ -58,17 +58,23 @@ fun Application.module() {
                 }
                 body {
                     +"body3"
-                    div {
+                    p {
                         val from = call.request.queryParameters.get("from")
                         if(from != null) {
                             +("from: " + from)
-                            +"<br/>"
-                            +("agent: " + call.request.userAgent())
-                            +"<br/>"
-                            +("remoteHost: " + call.request.local.remoteHost)
-                            +"<br/>"
-                            +("uri: " + call.request.local.uri)
                         }
+                    }
+                    p {
+                        +("agent: " + call.request.userAgent())
+                    }
+                    p {
+                        +("remoteHost: " + call.request.local.remoteHost)
+                    }
+                    p {
+                        +("uri: " + call.request.local.uri)
+                    }
+                    p {
+                        +("scheme: " + call.request.local.scheme)
                     }
                 }
             }
