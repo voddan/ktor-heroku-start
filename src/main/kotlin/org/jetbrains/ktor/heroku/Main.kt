@@ -14,6 +14,9 @@ import java.util.*
 import kotlinx.html.*
 import kotlinx.html.dom.*
 import kotlinx.html.stream.appendHTML
+import org.jetbrains.ktor.logging.logInfo
+import org.jetbrains.ktor.request.host
+import org.jetbrains.ktor.request.userAgent
 import org.jetbrains.ktor.response.contentType
 import org.jetbrains.ktor.response.header
 
@@ -55,6 +58,18 @@ fun Application.module() {
                 }
                 body {
                     +"body3"
+                    div {
+                        val from = call.request.queryParameters.get("from")
+                        if(from != null) {
+                            +("from: " + from)
+                            +"<br/>"
+                            +("agent: " + call.request.userAgent())
+                            +"<br/>"
+                            +("remoteHost: " + call.request.local.remoteHost)
+                            +"<br/>"
+                            +("uri: " + call.request.local.uri)
+                        }
+                    }
                 }
             }
 //            call.response.header("Content-Type", "text/html; charset=UTF-8")
@@ -102,7 +117,12 @@ fun Application.module() {
 }
 
 fun main(args: Array<String>) {
-    val port = Integer.valueOf(System.getenv("PORT"))
+    var port:Int = 5000
+    try{
+        port = Integer.valueOf(System.getenv("PORT"))
+    } catch(e:Exception) {
+
+    }
     embeddedServer(Netty, port, reloadPackages = listOf("heroku"), module = Application::module).start()
 }
 
