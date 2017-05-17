@@ -11,6 +11,11 @@ import org.jetbrains.ktor.http.*
 import org.jetbrains.ktor.netty.*
 import org.jetbrains.ktor.routing.*
 import java.util.*
+import kotlinx.html.*
+import kotlinx.html.dom.*
+import kotlinx.html.stream.appendHTML
+import org.jetbrains.ktor.response.contentType
+import org.jetbrains.ktor.response.header
 
 val hikariConfig = HikariConfig().apply {
     jdbcUrl = System.getenv("JDBC_DATABASE_URL")
@@ -23,7 +28,7 @@ else
 
 val html_utf8 = ContentType.Text.Html.withCharset(Charsets.UTF_8)
 
-var counter=0;
+var counter = 0;
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -42,6 +47,22 @@ fun Application.module() {
 
     install(Routing) {
         serveClasspathResources("public")
+
+        get("hi") {
+            val html = StringBuilder().appendHTML(true).html {
+                head {
+                    title { +"title1" }
+                }
+                body {
+                    +"body3"
+                }
+            }
+//            call.response.header("Content-Type", "text/html; charset=UTF-8")
+            call.response.header("my_header", "my_value")
+            call.response.status(HttpStatusCode.OK)
+            call.response.contentType(ContentType.Text.Html)
+            call.respond("<!DOCTYPE html>\n" + html.toString())
+        }
 
         get("hello") {
             call.respond("Hello World " + counter++)
