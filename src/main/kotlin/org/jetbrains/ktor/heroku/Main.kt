@@ -140,13 +140,12 @@ fun Application.module() {
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
                     //executeUpdate("DROP TABLE IF EXISTS ticks")
-                    executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp")
-                    executeUpdate("INSERT INTO ticks VALUES (now())")
-                    executeQuery("SELECT tick FROM ticks")
+                    executeUpdate("CREATE TABLE IF NOT EXISTS test (tick timestamp")
+                    executeUpdate("INSERT INTO test VALUES (now())")
+                    executeQuery("SELECT test FROM ticks")
                 }
                 while (rs.next()) {
                     result += rs.getString("tick")
-                    result += rs.getString("agent") + "\r\n"
                 }
             }
             call.respond(result);
