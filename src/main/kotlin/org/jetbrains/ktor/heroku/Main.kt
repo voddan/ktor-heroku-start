@@ -104,7 +104,7 @@ fun Application.module() {
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
                     executeUpdate("CREATE TABLE IF NOT EXISTS loads (" +
-                            "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                            "id SERIAL," +
                             "time DATE," +
                             "commingFrom VARCHAR(20)," +
                             "remoteHost VARCHAR(20)," +
