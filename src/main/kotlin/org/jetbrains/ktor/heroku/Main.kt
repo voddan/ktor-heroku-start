@@ -103,7 +103,7 @@ fun Application.module() {
             val model = HashMap<String, Any>()
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
-                    executeUpdate("CREATE TABLE loads")
+                    executeUpdate("DROP TABLE loads")
                     executeUpdate("CREATE TABLE IF NOT EXISTS loads (" +
                             "time timestamp," +
                             "commingFrom VARCHAR(20)," +
