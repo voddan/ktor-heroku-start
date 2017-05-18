@@ -134,6 +134,21 @@ fun Application.module() {
 //            val etag = model.toString().hashCode().toString()
 //            call.respond(FreeMarkerContent("db.ftl", model, etag, html_utf8))
         }
+        get("/db2") {
+            var result:String = ""
+            val model = HashMap<String, Any>()
+            dataSource.connection.use { connection ->
+                val rs = connection.createStatement().run {
+                    executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)")
+                    executeUpdate("INSERT INTO ticks VALUES (now())")
+                    executeQuery("SELECT tick FROM ticks")
+                }
+                while (rs.next()) {
+                    result += rs.toString();
+                }
+            }
+            call.respond(result);
+        }
     }
 }
 
