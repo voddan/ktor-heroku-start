@@ -53,131 +53,59 @@ fun Application.module() {
         serveClasspathResources("public")
 
         get("/") {
-            val html = StringBuilder().appendHTML(true).html {
-                head {
-                    title { +"title1" }
-                }
-                body {
-                    +"body3"
-                    p {
-                        val from = call.request.queryParameters.get("from")
-                        if(from != null) {
-                            +("from: " + from)
-                        }
-                    }
-                    p {
-                        +("agent: " + call.request.userAgent())
-                    }
-                    p {
-                        +("remoteHost: " + call.request.local.remoteHost)
-                    }
-                    p {
-                        +("host: " + call.request.local.host)
-                    }
-                    p {
-                        +("uri: " + call.request.local.uri)
-                    }
-                    p {
-                        +("scheme: " + call.request.local.scheme)
-                    }
-                }
-            }
-            call.response.header("Content-Type", "text/html; charset=UTF-8")
-            call.response.header("my_header", "my_value")
-            call.response.status(HttpStatusCode.OK)
-            val absolutePath = File(".").absolutePath
-            val toString = File(".").listFiles().joinToString()
-            val message = File("src/main/resources/public/test.txt").readText()
-            call.respond(message + "\r\n" + "absolutePath = " + absolutePath + "\r\n" +
-                    "toString = " + toString);
+            logDb(call)
+            printHtml(call)
         }
 
-//        get("/") {
-//            val model = HashMap<String, Any>()
-//            model.put("message", "Hello World!")
-//            val etag = model.toString().hashCode().toString()
-//            call.respond(FreeMarkerContent("index.ftl", model, etag, html_utf8))
-//        }
+        get("/test.html") {
+            printHtml(call)
+        }
 
         get("/db") {
             var result:String = ""
             val model = HashMap<String, Any>()
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
-                    executeUpdate("DROP TABLE loads")
-                    executeUpdate("CREATE TABLE IF NOT EXISTS loads (" +
-                            "time timestamp," +
-                            "commingFrom VARCHAR(20)," +
-                            "remoteHost VARCHAR(20)" +
-//                            "," +
-//                            "agent TEXT" +
-                            ")");
-                    executeUpdate("INSERT INTO loads (time, commingFrom, remoteHost, agent) VALUES(" +
-                            "now()," +
-                            "'" + call.request.queryParameters.get("from") + "'," +
-                            " '" + call.request.local.remoteHost +
-//                            "'," +
-//                            " " + call.request.userAgent() +
-                            ")")
-                    executeQuery("SELECT * FROM loads")
-                }
-
-
-                val output = ArrayList<String>()
-                while (rs.next()) {
-                    result += rs.toString();
-//                    output.add("Read from DB: " + rs.toString())//getTimestamp("time"))
-                }
-//                model.put("results", output)
-            }
-            call.respond(result);
-//            val etag = model.toString().hashCode().toString()
-//            call.respond(FreeMarkerContent("db.ftl", model, etag, html_utf8))
-        }
-        get("/db3") {
-            var result:String = ""
-            val model = HashMap<String, Any>()
-            dataSource.connection.use { connection ->
-                val rs = connection.createStatement().run {
-                    executeUpdate("DROP TABLE IF EXISTS loads")
-                    executeUpdate("CREATE TABLE IF NOT EXISTS loads (time timestamp, frm text, host text, agent text)")
-                    executeUpdate("INSERT INTO loads VALUES (now()," +
-                            " '" +
-                            call.request.queryParameters.get("from") +
-                            "', " +
-                            "'" +
-                            call.request.local.remoteHost +
-                            "'," +
-                            " '" +
-                            call.request.userAgent() +
-                            "')")
                     executeQuery("SELECT * FROM loads")
                 }
                 while (rs.next()) {
                     result += rs.getString("time")
                     result += rs.getString("frm")
                     result += rs.getString("host")
-                    result += rs.getString("agent")
+                    result += rs.getString("agent") + "\r\n"
                 }
             }
             call.respond(result);
         }
-        get("/db2") {
-            var result:String = ""
-            val model = HashMap<String, Any>()
-            dataSource.connection.use { connection ->
-                val rs = connection.createStatement().run {
-                    executeUpdate("DROP TABLE IF EXISTS test")
-                    executeUpdate("CREATE TABLE IF NOT EXISTS test (tick timestamp, agent text)")
-                    executeUpdate("INSERT INTO test VALUES (now(), 'some text')")
-                    executeQuery("SELECT * FROM test")
-                }
-                while (rs.next()) {
-                    result += rs.getString("tick")
-                    result += rs.getString("agent")
-                }
-            }
-            call.respond(result);
+    }
+}
+
+suspend fun  printHtml(call: ApplicationCall) {
+    call.response.header("Content-Type", "text/html; charset=UTF-8")
+    call.response.header("my_header", "my_value")
+    call.response.status(HttpStatusCode.OK)
+    val absolutePath = File(".").absolutePath
+    val toString = File(".").listFiles().joinToString()
+    val htmlContent = File("src/main/resources/public/test.txt").readText()
+    call.respond(htmlContent);
+
+}
+
+fun logDb(call: ApplicationCall) {
+    dataSource.connection.use { connection ->
+        connection.createStatement().run {
+//            executeUpdate("DROP TABLE IF EXISTS loads")
+            executeUpdate("CREATE TABLE IF NOT EXISTS loads (time timestamp, frm text, host text, agent text)")
+            executeUpdate("INSERT INTO loads VALUES (now()," +
+                    " '" +
+                    call.request.queryParameters.get("from") +
+                    "', " +
+                    "'" +
+                    call.request.local.remoteHost +
+                    "'," +
+                    " '" +
+                    call.request.userAgent() +
+                    "')")
         }
     }
 }
