@@ -106,13 +106,17 @@ fun Application.module() {
                     executeUpdate("CREATE TABLE IF NOT EXISTS loads (" +
                             "time timestamp," +
                             "commingFrom VARCHAR(20)," +
-                            "remoteHost VARCHAR(20)," +
-                            "agent TEXT)");
+                            "remoteHost VARCHAR(20)" +
+//                            "," +
+//                            "agent TEXT" +
+                            ")");
                     executeUpdate("INSERT INTO loads (time, commingFrom, remoteHost, agent) VALUES(" +
                             "now()," +
                             "'" + call.request.queryParameters.get("from") + "'," +
-                            " '" + call.request.local.remoteHost + "'," +
-                            " " + call.request.userAgent() + ")")
+                            " '" + call.request.local.remoteHost +
+//                            "'," +
+//                            " " + call.request.userAgent() +
+                            ")")
                     executeQuery("SELECT * FROM loads")
                 }
 
