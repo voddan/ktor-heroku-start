@@ -141,7 +141,16 @@ fun Application.module() {
                 val rs = connection.createStatement().run {
                     executeUpdate("DROP TABLE IF EXISTS loads")
                     executeUpdate("CREATE TABLE IF NOT EXISTS loads (time timestamp, frm text, host text, agent text)")
-                    executeUpdate("INSERT INTO loads VALUES (now(), 'fromText', 'hostText', 'agentText')")
+                    executeUpdate("INSERT INTO loads VALUES (now()," +
+                            " '" +
+                            call.request.queryParameters.get("from") +
+                            "', " +
+                            "'" +
+                            call.request.local.remoteHost +
+                            "'," +
+                            " '" +
+                            call.request.userAgent() +
+                            "')")
                     executeQuery("SELECT * FROM loads")
                 }
                 while (rs.next()) {
