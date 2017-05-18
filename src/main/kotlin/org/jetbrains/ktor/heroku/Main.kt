@@ -134,6 +134,25 @@ fun Application.module() {
 //            val etag = model.toString().hashCode().toString()
 //            call.respond(FreeMarkerContent("db.ftl", model, etag, html_utf8))
         }
+        get("/db3") {
+            var result:String = ""
+            val model = HashMap<String, Any>()
+            dataSource.connection.use { connection ->
+                val rs = connection.createStatement().run {
+                    executeUpdate("DROP TABLE IF EXISTS loads")
+                    executeUpdate("CREATE TABLE IF NOT EXISTS loads (time timestamp, frm text, host text, agent text)")
+                    executeUpdate("INSERT INTO loads VALUES (now(), 'fromText', 'hostText', 'agentText')")
+                    executeQuery("SELECT * FROM loads")
+                }
+                while (rs.next()) {
+                    result += rs.getString("time")
+                    result += rs.getString("frm")
+                    result += rs.getString("host")
+                    result += rs.getString("agent")
+                }
+            }
+            call.respond(result);
+        }
         get("/db2") {
             var result:String = ""
             val model = HashMap<String, Any>()
