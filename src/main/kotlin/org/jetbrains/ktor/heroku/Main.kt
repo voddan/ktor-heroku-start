@@ -87,8 +87,8 @@ fun Application.module() {
             call.response.status(HttpStatusCode.OK)
             val absolutePath = File(".").absolutePath
             val toString = File(".").listFiles().joinToString()
-//            val message = File("public/test.txt").readText()
-            call.respond("absolutePath = " + absolutePath + "\n" +
+            val message = File("src/main/resources/public/test.txt").readText()
+            call.respond(message + "\r\n" + "absolutePath = " + absolutePath + "\r\n" +
                     "toString = " + toString);
         }
 
