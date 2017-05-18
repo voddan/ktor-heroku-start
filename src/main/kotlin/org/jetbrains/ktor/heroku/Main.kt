@@ -142,7 +142,7 @@ fun Application.module() {
                     //executeUpdate("DROP TABLE IF EXISTS ticks")
                     executeUpdate("CREATE TABLE IF NOT EXISTS test (tick timestamp")
                     executeUpdate("INSERT INTO test VALUES (now())")
-                    executeQuery("SELECT test FROM ticks")
+                    executeQuery("SELECT tick FROM test")
                 }
                 while (rs.next()) {
                     result += rs.getString("tick")
