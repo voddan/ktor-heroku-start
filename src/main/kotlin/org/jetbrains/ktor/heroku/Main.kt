@@ -144,7 +144,7 @@ fun Application.module() {
                     executeQuery("SELECT tick FROM ticks")
                 }
                 while (rs.next()) {
-                    result += rs.toString();
+                    result += rs.getString("tick")
                 }
             }
             call.respond(result);
