@@ -104,13 +104,12 @@ fun Application.module() {
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
                     executeUpdate("CREATE TABLE IF NOT EXISTS loads (" +
-                            "id SERIAL," +
-                            "time DATE," +
+                            "time timestamp," +
                             "commingFrom VARCHAR(20)," +
                             "remoteHost VARCHAR(20)," +
                             "agent TEXT)");
                     executeUpdate("INSERT INTO loads (time, commingFrom, remoteHost, agent) VALUES(" +
-                            "CURRENT_TIMESTAMP," +
+                            "now()," +
                             "'" + call.request.queryParameters.get("from") + "'," +
                             " '" + call.request.local.remoteHost + "'," +
                             " " + call.request.userAgent() + ")")
