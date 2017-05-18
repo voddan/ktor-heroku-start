@@ -139,6 +139,7 @@ fun Application.module() {
             val model = HashMap<String, Any>()
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
+                    executeUpdate("DROP TABLE ticks")
                     executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)")
                     executeUpdate("INSERT INTO ticks VALUES (now())")
                     executeQuery("SELECT tick FROM ticks")
