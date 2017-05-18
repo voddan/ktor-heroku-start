@@ -100,6 +100,7 @@ fun Application.module() {
 //        }
 
         get("/db") {
+            var result:String = ""
             val model = HashMap<String, Any>()
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
@@ -121,15 +122,17 @@ fun Application.module() {
                     executeQuery("SELECT * FROM loads")
                 }
 
+
                 val output = ArrayList<String>()
                 while (rs.next()) {
-                    output.add("Read from DB: " + rs.toString())//getTimestamp("time"))
+                    result += rs.toString();
+//                    output.add("Read from DB: " + rs.toString())//getTimestamp("time"))
                 }
-                model.put("results", output)
+//                model.put("results", output)
             }
-
-            val etag = model.toString().hashCode().toString()
-            call.respond(FreeMarkerContent("db.ftl", model, etag, html_utf8))
+            call.respond(result);
+//            val etag = model.toString().hashCode().toString()
+//            call.respond(FreeMarkerContent("db.ftl", model, etag, html_utf8))
         }
     }
 }
