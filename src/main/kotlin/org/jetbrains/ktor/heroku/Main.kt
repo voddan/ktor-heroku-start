@@ -19,6 +19,7 @@ import org.jetbrains.ktor.request.host
 import org.jetbrains.ktor.request.userAgent
 import org.jetbrains.ktor.response.contentType
 import org.jetbrains.ktor.response.header
+import java.io.File
 
 val hikariConfig = HikariConfig().apply {
     jdbcUrl = System.getenv("JDBC_DATABASE_URL")
@@ -51,7 +52,7 @@ fun Application.module() {
     install(Routing) {
         serveClasspathResources("public")
 
-        get("hi") {
+        get("/") {
             val html = StringBuilder().appendHTML(true).html {
                 head {
                     title { +"title1" }
@@ -81,27 +82,22 @@ fun Application.module() {
                     }
                 }
             }
-//            call.response.header("Content-Type", "text/html; charset=UTF-8")
+            call.response.header("Content-Type", "text/html; charset=UTF-8")
             call.response.header("my_header", "my_value")
             call.response.status(HttpStatusCode.OK)
-            call.response.contentType(ContentType.Text.Html)
-            call.respond("<!DOCTYPE html>\n" + html.toString())
+            val absolutePath = File(".").absolutePath
+            val toString = File(".").listFiles().joinToString()
+//            val message = File("public/test.txt").readText()
+            call.respond("absolutePath = " + absolutePath + "\n" +
+                    "toString = " + toString);
         }
 
-        get("hello") {
-            call.respond("Hello World " + counter++)
-        }
-
-        get("error") {
-            throw IllegalStateException("An invalid place to be …")
-        }
-
-        get("/") {
-            val model = HashMap<String, Any>()
-            model.put("message", "Hello World!")
-            val etag = model.toString().hashCode().toString()
-            call.respond(FreeMarkerContent("index.ftl", model, etag, html_utf8))
-        }
+//        get("/") {
+//            val model = HashMap<String, Any>()
+//            model.put("message", "Hello World!")
+//            val etag = model.toString().hashCode().toString()
+//            call.respond(FreeMarkerContent("index.ftl", model, etag, html_utf8))
+//        }
 
         get("/db") {
             val model = HashMap<String, Any>()
