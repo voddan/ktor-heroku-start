@@ -103,14 +103,23 @@ fun Application.module() {
             val model = HashMap<String, Any>()
             dataSource.connection.use { connection ->
                 val rs = connection.createStatement().run {
-                    executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)")
-                    executeUpdate("INSERT INTO ticks VALUES (now())")
-                    executeQuery("SELECT tick FROM ticks")
+                    executeUpdate("CREATE TABLE IF NOT EXISTS loads (" +
+                            "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                            "time DATE," +
+                            "commingFrom VARCHAR(20)," +
+                            "remoteHost VARCHAR(20)," +
+                            "agent TEXT)");
+                    executeUpdate("INSERT INTO loads (time, commingFrom, remoteHost, agent) VALUES(" +
+                            "CURRENT_TIMESTAMP," +
+                            "'" + call.request.queryParameters.get("from") + "'," +
+                            " '" + call.request.local.remoteHost + "'," +
+                            " " + call.request.userAgent() + ")")
+                    executeQuery("SELECT * FROM loads")
                 }
 
                 val output = ArrayList<String>()
                 while (rs.next()) {
-                    output.add("Read from DB: " + rs.getTimestamp("tick"))
+                    output.add("Read from DB: " + rs.toString())//getTimestamp("time"))
                 }
                 model.put("results", output)
             }
@@ -129,6 +138,16 @@ fun main(args: Array<String>) {
 
     }
     embeddedServer(Netty, port, reloadPackages = listOf("heroku"), module = Application::module).start()
+//    embeddedServer(MyServer,port, reloadPackages = listOf("heroku"), module = Application::module).start()
+}
+
+object MyServer : ApplicationHostFactory<ApplicationHost> {
+    override fun create(environment: ApplicationHostEnvironment): ApplicationHost {
+        return MyServer.create(applicationHostEnvironment {
+
+        })
+    }
+
 }
 
 
