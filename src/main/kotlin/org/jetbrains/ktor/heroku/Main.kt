@@ -14,11 +14,14 @@ import java.util.*
 import kotlinx.html.*
 import kotlinx.html.dom.*
 import kotlinx.html.stream.appendHTML
+import org.jetbrains.ktor.jetty.Jetty
 import org.jetbrains.ktor.logging.logInfo
 import org.jetbrains.ktor.request.host
+import org.jetbrains.ktor.request.uri
 import org.jetbrains.ktor.request.userAgent
 import org.jetbrains.ktor.response.contentType
 import org.jetbrains.ktor.response.header
+import org.jetbrains.ktor.response.respondText
 import java.io.File
 
 val hikariConfig = HikariConfig().apply {
@@ -35,6 +38,10 @@ val html_utf8 = ContentType.Text.Html.withCharset(Charsets.UTF_8)
 var counter = 0;
 
 fun Application.module() {
+    intercept(ApplicationCallPipeline.Call) {
+        if (call.request.uri == "/intercept")
+            call.respondText("Test intercept")
+    }
     install(DefaultHeaders)
     install(ConditionalHeaders)
     install(PartialContentSupport)
@@ -116,7 +123,8 @@ fun main(args: Array<String>) {
     } catch(e:Exception) {
 
     }
-    embeddedServer(Netty, port, reloadPackages = listOf("heroku"), module = Application::module).start()
+//    embeddedServer(Netty, port, reloadPackages = listOf("heroku"), module = Application::module).start()
+    embeddedServer(Jetty, port, reloadPackages = listOf("heroku"), module = Application::module).start()
 //    embeddedServer(MyServer,port, reloadPackages = listOf("heroku"), module = Application::module).start()
 }
 

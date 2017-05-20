@@ -20,6 +20,11 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.ktor</groupId>
+            <artifactId>ktor-jetty</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.ktor</groupId>
             <artifactId>ktor-freemarker</artifactId>
             <version>${ktor.version}</version>
         </dependency>
