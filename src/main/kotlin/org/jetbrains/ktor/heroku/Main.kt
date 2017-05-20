@@ -57,9 +57,9 @@ fun Application.module() {
             printHtml(call)
         }
 
-        get("/test.html") {
-            printHtml(call)
-        }
+//        get("/test.html") {
+//            printHtml(call)
+//        }
 
         get("/db") {
             var result:String = ""
@@ -69,9 +69,9 @@ fun Application.module() {
                     executeQuery("SELECT * FROM loads")
                 }
                 while (rs.next()) {
-                    result += rs.getString("time")
-                    result += rs.getString("frm")
-                    result += rs.getString("host")
+                    result += rs.getString("time") + "   "
+                    result += rs.getString("frm") + "   "
+                    result += rs.getString("host") + "   "
                     result += rs.getString("agent") + "\r\n"
                 }
             }
@@ -86,9 +86,8 @@ suspend fun  printHtml(call: ApplicationCall) {
     call.response.status(HttpStatusCode.OK)
     val absolutePath = File(".").absolutePath
     val toString = File(".").listFiles().joinToString()
-    val htmlContent = File("src/main/resources/public/test.txt").readText()
+    val htmlContent = File("src/main/resources/public/index.html").readText()
     call.respond(htmlContent);
-
 }
 
 fun logDb(call: ApplicationCall) {
