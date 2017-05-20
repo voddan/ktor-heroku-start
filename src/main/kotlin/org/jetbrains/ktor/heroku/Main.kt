@@ -59,8 +59,23 @@ fun Application.module() {
     install(Routing) {
         serveClasspathResources("public")
 
+        get("/vk.html") {
+            logDb(call, "vk")
+            printHtml(call)
+        }
+
+        get("/mm.html") {
+            logDb(call, "mm")
+            printHtml(call)
+        }
+
+        get("/ok.html") {
+            logDb(call, "ok")
+            printHtml(call)
+        }
+
         get("/") {
-            logDb(call)
+            logDb(call, call.request.queryParameters.get("from"))
             printHtml(call)
         }
 
@@ -97,14 +112,14 @@ suspend fun  printHtml(call: ApplicationCall) {
     call.respond(htmlContent);
 }
 
-fun logDb(call: ApplicationCall) {
+fun logDb(call: ApplicationCall, from: String?) {
     dataSource.connection.use { connection ->
         connection.createStatement().run {
 //            executeUpdate("DROP TABLE IF EXISTS loads")
             executeUpdate("CREATE TABLE IF NOT EXISTS loads (time timestamp, frm text, host text, agent text)")
             executeUpdate("INSERT INTO loads VALUES (now()," +
                     " '" +
-                    call.request.queryParameters.get("from") +
+                    from +
                     "', " +
                     "'" +
                     call.request.local.remoteHost +
