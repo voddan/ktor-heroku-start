@@ -26,6 +26,7 @@ import java.io.File
 
 val hikariConfig = HikariConfig().apply {
     jdbcUrl = System.getenv("JDBC_DATABASE_URL")
+    maximumPoolSize = 5
 }
 
 val dataSource = if (hikariConfig.jdbcUrl != null)
